@@ -1,1 +1,1 @@
-export default()=><div>home </div>
+export default()=><div style={{background:'#fff'}}>home </div>

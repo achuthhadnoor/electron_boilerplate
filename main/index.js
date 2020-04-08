@@ -5,7 +5,7 @@ const {
     Tray,
     globalShortcut
 } = require("electron");
-
+const {join} = require('path')
 const isDev = require("electron-is-dev");
 const prepareNext = require("electron-next");
 const {
@@ -63,23 +63,39 @@ app.on('ready', async () => {
     checkForUpdates();
     registerGlobalShortcuts();
 })
-
+app.allowRendererProcessReuse = true;
 function createTray() {
     tray = new Tray(icon_path.png);
+    tray.on("click", () => toggleWindow())
 }
-
+function toggleWindow(){
+    if (trayWindow.isVisible()) {
+        trayWindow.hide();
+        if (process.platform === "darwin") {
+            //app.dock.hide();
+            trayWindow.setSkipTaskbar(true);
+        }
+    } else {
+        trayWindow.show();
+        if (process.platform === "darwin") {
+            app.dock.show();
+            trayWindow.setSkipTaskbar(true);
+        }
+    }
+}
 function createWindow() {
     trayWindow = new BrowserWindow({
-        width: 600,
-        height: 400,
-        show: false,
-        frame: false,
-        transparent: true,
-        maximizable: false,
-        minimizable: false,
-        skipTaskbar: true,
+        width: 350,
+        height: 550,
         resizable: false,
-        titleBarStyle: "inset", //"hidden",
+        movable: true,
+        fullscreenable: false,
+        alwaysOnTop: true,
+        icon: icon_path.png,
+        show: false,
+        skipTaskbar: true,
+        frame: false,//platform() !== "win32",
+        titleBarStyle:"inset", //"hidden",
         webPreferences: {
             nodeIntegration: true,
             preload: join(__dirname, 'preload.js'),
@@ -108,6 +124,7 @@ function createWindow() {
     } else {
         trayPosition = "trayRight";
     }
+    // trayPosition = "trayRight";
     positioner.move(trayPosition, tray.getBounds());
     trayWindow.setSkipTaskbar(true);
     
@@ -117,10 +134,7 @@ function createWindow() {
         if (trayWindow.setSkipTaskbar) {
             trayWindow.setSkipTaskbar(true)
         }
-    });
-    if (platform() !== "win32") {
-        // autoUpdater();
-    }
+    }); 
 }
 
 function checkForUpdates(){
@@ -129,10 +143,10 @@ function checkForUpdates(){
 
 function registerGlobalShortcuts() {
     // Global Shortcut : Toggle Window
-    const shortcutToggleWindow = globalShortcut.register("Super+Alt+Up", () => {
-        toggleWindow();
+    const shortcutToggleWindow = globalShortcut.register("Super+Ctrl+Up", () => {
+    toggleWindow();
     });
-    const shortcutToggleState = globalShortcut.register("Super+Alt+Down", () => {
+    const shortcutToggleState = globalShortcut.register("Super+Ctrl+Down", () => {
         toggleWindow();
     });
     if (!shortcutToggleState) {

@@ -1,0 +1,39 @@
+{
+  "appId": "com.snipcode.uiuxdx",
+  "productName": "Snipcode",
+  "asar": true,
+  "directories": {
+    "output": "dist",
+    "buildResources": "assets/app-icons"
+  }, 
+  "files": [
+      "main",
+      "main/icons",
+      "renderer/out"
+  ],
+  "linux": {
+    "category": "Developer-tools",
+    "target": [
+      {
+        "target": "deb",
+        "arch": ["ia32", "x64"]
+      },
+      {
+        "target": "AppImage",
+        "arch": ["ia32", "x64"]
+      }
+    ]
+  },
+  "win": {
+    "publish": ["github"],
+    "target": ["zip", "nsis"],
+    "verifyUpdateCodeSignature": false
+  },
+  "mac": {
+    "publish": ["github"],
+    "category": "public.app-category.navigation",
+    "extendInfo": {
+      "LSUIElement": 1
+    }
+  }
+}
